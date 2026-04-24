@@ -2,10 +2,12 @@ from models.gambler import Gambler
 from services.gambler_service import GamblerService
 from services.stake_service import StakeService
 from services.betting_service import BettingService
+from services.session_service import SessionService
 
 gambler_service = GamblerService()
 stake_service = StakeService()
 betting_service = BettingService()
+session_service = SessionService()
 
 
 def menu():
@@ -21,6 +23,8 @@ def menu():
     print("9. Withdraw")
     print("10. Transaction History")
     print("11. Place Bet")
+    print("12. Start Session")
+    print("13. Auto Play Session")
 
 
 while True:
@@ -116,6 +120,19 @@ while True:
             prob = float(input("Enter win probability (0-1): "))
 
             betting_service.place_bet(gid, amount, prob)
+
+        # 12. START SESSION
+        elif choice == "12":
+            gid = int(input("Enter gambler ID: "))
+            session_service.start_session(gid)
+
+        # 13. AUTO PLAY SESSION
+        elif choice == "13":
+            gid = int(input("Enter gambler ID: "))
+            bet_amount = float(input("Enter bet amount: "))
+            prob = float(input("Enter win probability (0-1): "))
+
+            session_service.play_session(gid, bet_amount, prob)
 
         else:
             print(" Invalid choice. Try again.")
