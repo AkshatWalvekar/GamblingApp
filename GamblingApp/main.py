@@ -1,9 +1,11 @@
 from models.gambler import Gambler
 from services.gambler_service import GamblerService
 from services.stake_service import StakeService
+from services.betting_service import BettingService
 
 gambler_service = GamblerService()
 stake_service = StakeService()
+betting_service = BettingService()
 
 
 def menu():
@@ -18,6 +20,7 @@ def menu():
     print("8. Deposit")
     print("9. Withdraw")
     print("10. Transaction History")
+    print("11. Place Bet")
 
 
 while True:
@@ -25,7 +28,7 @@ while True:
     choice = input("Enter choice: ")
 
     try:
-        # 1. Create
+        # 1. CREATE GAMBLER
         if choice == "1":
             name = input("Enter name: ")
             email = input("Enter email: ")
@@ -38,7 +41,7 @@ while True:
 
             print(" Gambler Created Successfully")
 
-        # 2. View
+        # 2. VIEW GAMBLER
         elif choice == "2":
             gid = int(input("Enter gambler ID: "))
             data = gambler_service.get_gambler(gid)
@@ -50,7 +53,7 @@ while True:
             else:
                 print(" Gambler not found")
 
-        # 3. Update
+        # 3. UPDATE GAMBLER
         elif choice == "3":
             gid = int(input("Enter gambler ID: "))
             name = input("Enter new name: ")
@@ -59,7 +62,7 @@ while True:
             gambler_service.update_gambler(gid, name, email)
             print(" Updated successfully")
 
-        # 4. Statistics
+        # 4. VIEW STATISTICS
         elif choice == "4":
             gid = int(input("Enter gambler ID: "))
             stats = gambler_service.get_statistics(gid)
@@ -68,43 +71,51 @@ while True:
             print(f"Current Stake: {stats['current_stake']}")
             print(f"Win Rate: {stats['win_rate']:.2f}%")
 
-        # 5. Validate
+        # 5. VALIDATE GAMBLER
         elif choice == "5":
             gid = int(input("Enter gambler ID: "))
             result = gambler_service.validate_gambler(gid)
 
-            print("Eligible:" if result else "Not Eligible")
+            print("Eligible" if result else "Not Eligible")
 
-        # 6. Reset
+        # 6. RESET GAMBLER
         elif choice == "6":
             gid = int(input("Enter gambler ID: "))
             gambler_service.reset_gambler(gid)
             print(" Gambler Reset Done")
 
-        # 7. Exit
+        # 7. EXIT
         elif choice == "7":
             print(" Exiting Application...")
             break
 
-        # 8. Deposit
+        # 8. DEPOSIT
         elif choice == "8":
             gid = int(input("Enter gambler ID: "))
             amount = float(input("Enter deposit amount: "))
 
             stake_service.deposit(gid, amount)
 
-        # 9. Withdraw
+        # 9. WITHDRAW
         elif choice == "9":
             gid = int(input("Enter gambler ID: "))
             amount = float(input("Enter withdraw amount: "))
 
             stake_service.withdraw(gid, amount)
 
-        # 10. History
+        # 10. TRANSACTION HISTORY
         elif choice == "10":
             gid = int(input("Enter gambler ID: "))
             print("\n--- Transaction History ---")
             stake_service.get_history(gid)
+
+        # 11. PLACE BET
+        elif choice == "11":
+            gid = int(input("Enter gambler ID: "))
+            amount = float(input("Enter bet amount: "))
+            prob = float(input("Enter win probability (0-1): "))
+
+            betting_service.place_bet(gid, amount, prob)
 
         else:
             print(" Invalid choice. Try again.")

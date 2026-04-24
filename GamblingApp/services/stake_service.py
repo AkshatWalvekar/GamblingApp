@@ -3,13 +3,14 @@ from utils.stake_validator import validate_stake_amount
 from models.stake_transactions import StakeTransaction
 from repository.gambler_repository import GamblerRepository
 
+
 class StakeService:
 
     def __init__(self):
         self.repo = StakeRepository()
         self.gambler_repo = GamblerRepository()
 
-    # ADD MONEY
+    # Add money
     def deposit(self, gambler_id, amount):
         validate_stake_amount(amount)
 
@@ -23,7 +24,7 @@ class StakeService:
 
         print(" Deposit successful")
 
-    # WITHDRAW MONEY
+    # Withdraw money
     def withdraw(self, gambler_id, amount):
         validate_stake_amount(amount)
 
@@ -41,7 +42,7 @@ class StakeService:
 
         print(" Withdrawal successful")
 
-    # CHECK BOUNDARY
+    # Check boundary
     def check_limits(self, gambler_id):
         gambler = self.gambler_repo.find_by_id(gambler_id)
 
@@ -51,7 +52,7 @@ class StakeService:
         elif gambler["current_stake"] <= gambler["loss_threshold"]:
             print(" Loss limit reached!")
 
-    # TRANSACTION HISTORY
+    # Transaction history
     def get_history(self, gambler_id):
         transactions = self.repo.get_transactions(gambler_id)
 
