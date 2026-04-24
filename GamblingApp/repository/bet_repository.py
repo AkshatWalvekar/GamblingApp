@@ -21,3 +21,15 @@ class BetRepository:
         ))
 
         conn.commit()
+
+def get_bets_by_gambler(self, gambler_id):
+    from config.db import get_connection
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute(
+        "SELECT * FROM bets WHERE gambler_id=%s ORDER BY id",
+        (gambler_id,)
+    )
+
+    return cursor.fetchall()

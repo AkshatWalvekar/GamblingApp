@@ -3,11 +3,13 @@ from services.gambler_service import GamblerService
 from services.stake_service import StakeService
 from services.betting_service import BettingService
 from services.session_service import SessionService
+from services.analytics_service import AnalyticsService
 
 gambler_service = GamblerService()
 stake_service = StakeService()
 betting_service = BettingService()
 session_service = SessionService()
+analytics_service = AnalyticsService()
 
 
 def menu():
@@ -25,6 +27,7 @@ def menu():
     print("11. Place Bet")
     print("12. Start Session")
     print("13. Auto Play Session")
+    print("14. View Performance Analytics")
 
 
 while True:
@@ -133,6 +136,20 @@ while True:
             prob = float(input("Enter win probability (0-1): "))
 
             session_service.play_session(gid, bet_amount, prob)
+
+        # 14. ANALYTICS
+        elif choice == "14":
+            gid = int(input("Enter gambler ID: "))
+            result = analytics_service.get_full_analysis(gid)
+
+            print("\n===== ANALYTICS =====")
+            print(f"Total Bets: {result['total_bets']}")
+            print(f"Wins: {result['wins']}")
+            print(f"Losses: {result['losses']}")
+            print(f"Win Rate: {result['win_rate']:.2f}%")
+            print(f"Net Profit: {result['net_profit']}")
+            print(f"Longest Win Streak: {result['longest_win_streak']}")
+            print(f"Longest Loss Streak: {result['longest_loss_streak']}")
 
         else:
             print(" Invalid choice. Try again.")
