@@ -1,6 +1,6 @@
 from repository.gambler_repository import GamblerRepository
-from utils.validators import validate_gambler
 from models.statistics import GamblerStatistics
+from utils.input_validator import InputValidator
 
 class GamblerService:
 
@@ -8,11 +8,13 @@ class GamblerService:
         self.repo = GamblerRepository()
 
     def create_gambler(self, gambler):
-        validate_gambler(
+        InputValidator.validate_stake(gambler.initial_stake)
+        InputValidator.validate_limits(
             gambler.initial_stake,
             gambler.win_threshold,
             gambler.loss_threshold
         )
+
         self.repo.save(gambler)
 
     def update_gambler(self, gambler_id, name, email):
@@ -41,6 +43,7 @@ class GamblerService:
 
         if data["current_stake"] <= 0:
             return False
+
         return True
 
     def reset_gambler(self, gambler_id):

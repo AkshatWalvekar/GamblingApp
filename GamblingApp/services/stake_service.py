@@ -1,8 +1,7 @@
 from repository.stake_repository import StakeRepository
-from utils.stake_validator import validate_stake_amount
-from models.stake_transactions import StakeTransaction
 from repository.gambler_repository import GamblerRepository
-
+from models.stake_transactions import StakeTransaction
+from utils.input_validator import InputValidator
 
 class StakeService:
 
@@ -10,9 +9,8 @@ class StakeService:
         self.repo = StakeRepository()
         self.gambler_repo = GamblerRepository()
 
-    # Add money
     def deposit(self, gambler_id, amount):
-        validate_stake_amount(amount)
+        InputValidator.validate_stake(amount)
 
         gambler = self.gambler_repo.find_by_id(gambler_id)
         new_balance = gambler["current_stake"] + amount
@@ -24,14 +22,11 @@ class StakeService:
 
         print(" Deposit successful")
 
-    # Withdraw money
     def withdraw(self, gambler_id, amount):
-        validate_stake_amount(amount)
-
         gambler = self.gambler_repo.find_by_id(gambler_id)
 
-        if gambler["current_stake"] < amount:
-            raise ValueError("Insufficient balance")
+        InputValidator.validate_stake(amount)
+        InputValidator.validate_bet_amount(amount, gambler["current_stake"])
 
         new_balance = gambler["current_stake"] - amount
 
@@ -42,7 +37,6 @@ class StakeService:
 
         print(" Withdrawal successful")
 
-    # Check boundary
     def check_limits(self, gambler_id):
         gambler = self.gambler_repo.find_by_id(gambler_id)
 
@@ -52,9 +46,8 @@ class StakeService:
         elif gambler["current_stake"] <= gambler["loss_threshold"]:
             print(" Loss limit reached!")
 
-    # Transaction history
     def get_history(self, gambler_id):
         transactions = self.repo.get_transactions(gambler_id)
 
         for tx in transactions:
-            print(tx)
+            print(f"{tx['transaction_type']} | Amount: {tx['amount']} | Balance: {tx['balance_after']}")

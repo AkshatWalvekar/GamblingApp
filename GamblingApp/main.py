@@ -4,6 +4,7 @@ from services.stake_service import StakeService
 from services.betting_service import BettingService
 from services.session_service import SessionService
 from services.analytics_service import AnalyticsService
+from exceptions.custom_exceptions import ValidationException
 
 gambler_service = GamblerService()
 stake_service = StakeService()
@@ -35,7 +36,6 @@ while True:
     choice = input("Enter choice: ")
 
     try:
-        # 1. CREATE GAMBLER
         if choice == "1":
             name = input("Enter name: ")
             email = input("Enter email: ")
@@ -48,7 +48,6 @@ while True:
 
             print(" Gambler Created Successfully")
 
-        # 2. VIEW GAMBLER
         elif choice == "2":
             gid = int(input("Enter gambler ID: "))
             data = gambler_service.get_gambler(gid)
@@ -60,7 +59,6 @@ while True:
             else:
                 print(" Gambler not found")
 
-        # 3. UPDATE GAMBLER
         elif choice == "3":
             gid = int(input("Enter gambler ID: "))
             name = input("Enter new name: ")
@@ -69,7 +67,6 @@ while True:
             gambler_service.update_gambler(gid, name, email)
             print(" Updated successfully")
 
-        # 4. VIEW STATISTICS
         elif choice == "4":
             gid = int(input("Enter gambler ID: "))
             stats = gambler_service.get_statistics(gid)
@@ -78,66 +75,52 @@ while True:
             print(f"Current Stake: {stats['current_stake']}")
             print(f"Win Rate: {stats['win_rate']:.2f}%")
 
-        # 5. VALIDATE GAMBLER
         elif choice == "5":
             gid = int(input("Enter gambler ID: "))
             result = gambler_service.validate_gambler(gid)
 
             print("Eligible" if result else "Not Eligible")
 
-        # 6. RESET GAMBLER
         elif choice == "6":
             gid = int(input("Enter gambler ID: "))
             gambler_service.reset_gambler(gid)
             print(" Gambler Reset Done")
 
-        # 7. EXIT
         elif choice == "7":
             print(" Exiting Application...")
             break
 
-        # 8. DEPOSIT
         elif choice == "8":
             gid = int(input("Enter gambler ID: "))
             amount = float(input("Enter deposit amount: "))
-
             stake_service.deposit(gid, amount)
 
-        # 9. WITHDRAW
         elif choice == "9":
             gid = int(input("Enter gambler ID: "))
             amount = float(input("Enter withdraw amount: "))
-
             stake_service.withdraw(gid, amount)
 
-        # 10. TRANSACTION HISTORY
         elif choice == "10":
             gid = int(input("Enter gambler ID: "))
             print("\n--- Transaction History ---")
             stake_service.get_history(gid)
 
-        # 11. PLACE BET
         elif choice == "11":
             gid = int(input("Enter gambler ID: "))
             amount = float(input("Enter bet amount: "))
             prob = float(input("Enter win probability (0-1): "))
-
             betting_service.place_bet(gid, amount, prob)
 
-        # 12. START SESSION
         elif choice == "12":
             gid = int(input("Enter gambler ID: "))
             session_service.start_session(gid)
 
-        # 13. AUTO PLAY SESSION
         elif choice == "13":
             gid = int(input("Enter gambler ID: "))
             bet_amount = float(input("Enter bet amount: "))
             prob = float(input("Enter win probability (0-1): "))
-
             session_service.play_session(gid, bet_amount, prob)
 
-        # 14. ANALYTICS
         elif choice == "14":
             gid = int(input("Enter gambler ID: "))
             result = analytics_service.get_full_analysis(gid)
@@ -154,5 +137,8 @@ while True:
         else:
             print(" Invalid choice. Try again.")
 
+    except ValidationException as ve:
+        print(" Validation Error:", ve)
+
     except Exception as e:
-        print(" Error:", e)
+        print(" System Error:", e)
